@@ -9,11 +9,15 @@
 */
 
 /* Vimprobable version number */
+<<<<<<< HEAD
 #define VERSION "0.9.11.2"
+=======
+#define VERSION "0.9.10.0"
+>>>>>>> Applied ext_handlers & my configs
 #define INTERNAL_VERSION "Vimprobable2/"VERSION
 
 /* general settings */
-char startpage[MAX_SETTING_SIZE]      = "http://www.vimprobable.org/";
+char startpage[MAX_SETTING_SIZE]      = "https://bbs.archlinux.org/";
 char useragent[MAX_SETTING_SIZE]      = "Vimprobable2/" VERSION;
 char acceptlanguage[MAX_SETTING_SIZE] = "";
 static const gboolean enablePlugins     = TRUE; /* TRUE keeps plugins enabled */
@@ -21,27 +25,27 @@ static const gboolean enableJava        = TRUE; /* FALSE disables Java applets *
 static const gboolean enablePagecache   = FALSE; /* TRUE turns on the page cache. */
 
 /* appearance */
-char statusbgcolor[MAX_SETTING_SIZE]    = "#000000";            /* background color for status bar */
-char statuscolor[MAX_SETTING_SIZE]      = "#ffffff";            /* color for status bar */
-char sslbgcolor[MAX_SETTING_SIZE]       = "#b0ff00";            /* background color for status bar with SSL url */
-char sslcolor[MAX_SETTING_SIZE]         = "#000000";            /* color for status bar with SSL url */
+char statusbgcolor[MAX_SETTING_SIZE]    = "#333333";            /* background color for status bar */
+char statuscolor[MAX_SETTING_SIZE]      = "#696969";            /* color for status bar */
+char sslbgcolor[MAX_SETTING_SIZE]       = "#333333";            /* background color for status bar with SSL url */
+char sslcolor[MAX_SETTING_SIZE]         = "#959FA7";            /* color for status bar with SSL url */
 
                                         /*  normal,                 warning,                error       */
-static const char *urlboxfont[]         = { "monospace normal 8",   "monospace normal 8",   "monospace bold 8"};
-static const char *urlboxcolor[]        = { NULL,                   "#ff0000",              "#ffffff" };
-static const char *urlboxbgcolor[]      = { NULL,                   NULL,                   "#ff0000" };
+static const char *urlboxfont[]         = { "Envy Code R 9",   "Droid Sans Mono Slashed 9",   "Droid Sans Mono Slashed 9"};
+static const char *urlboxcolor[]        = { "#CCCCCC",              "#CC99CC",              "#FFB6C1" };
+static const char *urlboxbgcolor[]      = { "#212121",              "#111111",              "#212121" };
 
                                         /*  normal,                 error               */
-static const char *completionfont[]     = { "monospace normal 8",   "monospace bold 8" };
+static const char *completionfont[]     = { "Envy Code R 9",   "Droid Sans Mono Slashed 9" };
                                                                                         /* topborder color */
-static const char *completioncolor[]    = { "#000000",              "#ff00ff",              "#000000" };
+static const char *completioncolor[]    = { "#899CA1",              "#BF4D80",              "#444444" };
                                                                                         /* current row background */
-static const char *completionbgcolor[]  = { "#ffffff",              "#ffffff",              "#fff000" };
+static const char *completionbgcolor[]  = { "#3D3D3D",              "#8C4665",              "#5C5C5C" };
 /* pango markup for prefix highliting:      opening,                closing             */
 #define             COMPLETION_TAG_OPEN     "<b>"
 #define             COMPLETION_TAG_CLOSE    "</b>"
 
-static const char statusfont[]          = "monospace bold 8";   /* font for status bar */
+static const char statusfont[]          = "Envy Code R 9";   /* font for status bar */
 #define             ENABLE_HISTORY_INDICATOR
 #define             ENABLE_INCREMENTAL_SEARCH
 #define             ENABLE_GTK_PROGRESS_BAR
@@ -53,6 +57,9 @@ static const char progressbarcurrent    = '>';
 static const char progressbarspacer     = ' ';
 static const char progressborderright   = ']';
 
+static const char *handler_types[]      = { "mailto:", "ftp://" };
+static const char *handlers[]           = { "thunderbird %s", "x-terminal-emulator -e wget ftp://%s" };
+  
 /* cookies */
 #define             ENABLE_COOKIE_SUPPORT
 #define             COOKIES_STORAGE_FILENAME    "%s/vimprobable/cookies", config_base
@@ -82,13 +89,15 @@ gboolean complete_case_sensitive        = TRUE;
 
 /* search engines */
 static Searchengine searchengines[] = {
-    { "i",          "http://ixquick.com/do/metasearch.pl?query=%s" },
-    { "s",          "https://ssl.scroogle.org/cgi-bin/nbbwssl.cgi?Gw=%s" },
-    { "w",          "https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special%%3ASearch&search=%s&go=Go" },
-    { "wd",         "https://secure.wikimedia.org/wikipedia/de/w/index.php?title=Special%%3ASearch&search=%s&go=Go" },
+    { "d",         "http://duckduckgo.com/?q=%s" },
+    { "g",         "http://www.google.com/search?hl=en&source=hp&ie=ISO-8859-l&q=%s" },
+    { "a",         "https://wiki.archlinux.org/index.php?title=Special%%3ASearch&search=%s&go=Go" },
+    { "w",         "https://secure.wikimedia.org/wikipedia/en/w/index.php?title=Special%%3ASearch&search=%s&go=Go" },
+    /* Hack to shorten urls */
+    { "b",         "http://api.bit.ly/v3/shorten?login=jasonwryan&apikey=R_b71a9d75eecaed78de197596f35126d9&longUrl=%s&format=txt" },
 };
 
-static char defaultsearch[MAX_SETTING_SIZE] = "i";
+static char defaultsearch[MAX_SETTING_SIZE] = "d";
 
 /* command mapping */
 Command commands[COMMANDSIZE] = {

@@ -8,14 +8,14 @@
 function Hints() {
     var config = {
         maxAllowedHints: 500,
-        hintCss: "z-index:100000;font-family:monospace;font-size:10px;"
-               + "font-weight:bold;color:white;background-color:red;"
+        hintCss: "z-index:100000;font-family:monospace;font-size:11px;"
+               + "font-weight:normal;color:black;background-color:#CCC;"
                + "padding:0px 1px;position:absolute;",
         hintClass: "hinting_mode_hint",
         hintClassFocus: "hinting_mode_hint_focus",
-        elemBackground: "#ff0",
-        elemBackgroundFocus: "#8f0",
-        elemColor: "#000"
+        elemBackground: "none",
+        elemBackgroundFocus: "none",
+        elemColor: "none"
     };
 
     var hintContainer;

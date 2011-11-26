@@ -22,5 +22,10 @@ webview_navigation_cb(WebKitWebView * webview, WebKitWebFrame * frame,
 		      WebKitNetworkRequest * request,
 		      WebKitWebPolicyDecision * decision, gpointer user_data)
 {
-	return FALSE;
+	char *uri = (char *)webkit_network_request_get_uri(request);
+	/* check for external handlers */
+	if (open_handler(uri))
+		return TRUE;
+	else
+		return FALSE;
 }

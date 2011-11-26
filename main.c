@@ -1143,8 +1143,53 @@ number(const Arg *arg) {
 }
 
 gboolean
+open_handler(char *uri) {
+    char *argv[64];
+    char *p = NULL, *arg, arg_temp[MAX_SETTING_SIZE], *temp, temp2[MAX_SETTING_SIZE] = "", *temp3;
+    int i, j;
+    p = strchr(uri, ':');
+    if (p) {
+        for (i = 0; i < LENGTH(handler_types); i++) {
+            if (strncmp(uri, handler_types[i], strlen(handler_types[i])) == 0) {
+                if (strlen(handlers[i]) > 0) {
+                    arg = (uri + strlen(handler_types[i]));
+                    strncpy(temp2, handlers[i], MAX_SETTING_SIZE);
+                    temp = strtok(temp2, " ");
+                    j = 0;
+                    while (temp != NULL) {
+                        printf("part: '%s'\n", temp);
+                        if (strstr(temp, "%s")) {
+                            temp3 = temp;
+                            memset(arg_temp, 0, MAX_SETTING_SIZE);;
+                            while (strncmp(temp3, "%s", 2) != 0) {
+                                strncat(arg_temp, temp3, 1);
+                                temp3++;
+                            }
+                            strcat(arg_temp, arg);
+                            temp3++;
+                            temp3++;
+                            strcat(arg_temp, temp3);
+                            argv[j] = arg_temp;
+                        } else {
+                            argv[j] = temp;
+                        }
+                        temp = strtok(NULL, " ");
+                        j++;
+                    }
+                    argv[j] =  NULL;
+                    g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+                }
+                return TRUE;
+            }
+        }
+    }
+    return FALSE;
+}
+
+gboolean
+
 open_arg(const Arg *arg) {
-    char *argv[6];
+    char *argv[64];
     char *s = arg->s, *p = NULL, *new;
     Arg a = { .i = NavigationReload };
     int len;
@@ -1172,7 +1217,12 @@ open_arg(const Arg *arg) {
             --p;
         *(p + 1) = '\0';
         len = strlen(s);
-        new = NULL, p = strchr(s, ' ');
+        new = NULL;
+        /* check for external handlers */
+        if (open_handler(s))
+            return TRUE;        
+        /* check for search engines */
+        p = strchr(s, ' ');
         if (p) {                                                         /* check for search engines */
             *p = '\0';
             search_uri = find_uri_for_searchengine(s);
@@ -2359,10 +2409,10 @@ setup_signals() {
 void
 setup_cookies()
 {
-	if (file_cookie_jar)
-		g_object_unref(file_cookie_jar);
+    if (file_cookie_jar)
+            g_object_unref(file_cookie_jar);
 
-	if (session_cookie_jar)
+    if (session_cookie_jar)
 		g_object_unref(session_cookie_jar);
 
 	session_cookie_jar = soup_cookie_jar_new();
@@ -2382,22 +2432,23 @@ setup_cookies()
  *      is limited to handling cookies.
  */
 void
-new_generic_request(SoupSession *session, SoupMessage *soup_msg, gpointer unused) {
-	SoupMessageHeaders *soup_msg_h;
-	SoupURI *uri;
-	char *cookie_str;
+new_generic_request(SoupSession *session, SoupMessage *soup_msg, gpointer unused) 
+{
+    SoupMessageHeaders *soup_msg_h;
+    SoupURI *uri;
+    char *cookie_str;
 
-	soup_msg_h = soup_msg->request_headers;
-	soup_message_headers_remove(soup_msg_h, "Cookie");
-	uri = soup_message_get_uri(soup_msg);
-	if( (cookie_str = get_cookies(uri)) ) {
-		soup_message_headers_append(soup_msg_h, "Cookie", cookie_str);
+soup_msg_h = soup_msg->request_headers;
+    soup_message_headers_remove(soup_msg_h, "Cookie");
+    uri = soup_message_get_uri(soup_msg);
+    if( (cookie_str = get_cookies(uri)) ) {
+        soup_message_headers_append(soup_msg_h, "Cookie", cookie_str);
 		g_free(cookie_str);
 	}
 
-	g_signal_connect_after(G_OBJECT(soup_msg), "got-headers", G_CALLBACK(handle_cookie_request), NULL);
+    g_signal_connect_after(G_OBJECT(soup_msg), "got-headers", G_CALLBACK(handle_cookie_request), NULL);
 
-	return;
+    return;
 }
 
 char *
