@@ -139,6 +139,8 @@ Command commands[COMMANDSIZE] = {
     { "scrollright",                                    scroll,           {ScrollMove     | DirectionRight    | UnitLine} },
     { "scrollup",                                       scroll,           {ScrollMove     | DirectionTop      | UnitLine} },
     { "scrolldown",                                     scroll,           {ScrollMove     | DirectionBottom   | UnitLine} },
+    { "read",                                          	script,           { .s = "(function(){readStyle='style-terminal';readSize='size-medium';readMargin='margin-narrow';_readability_script=document.createElement('SCRIPT');_readability_script.type='text/javascript';_readability_script.src='http://READABILITY_URL_REPLACE/js/readability.js?x='+(Math.random());document.getElementsByTagName('head')[0].appendChild(_readability_script);_readability_css=document.createElement('LINK');_readability_css.rel='stylesheet';_readability_css.href='http://READABILITY_URL_REPLACE/css/readability.css';_readability_css.type='text/css';_readability_css.media='screen';document.getElementsByTagName('head')[0].appendChild(_readability_css);_readability_print_css=document.createElement('LINK');_readability_print_css.rel='stylesheet';_readability_print_css.href='http://READABILITY_URL_REPLACE/css/readability-print.css';_readability_print_css.media='print';_readability_print_css.type='text/css';document.getElementsByTagName('head')[0].appendChild(_readability_print_css);})();"}},
+
 };
 
 /* mouse bindings
