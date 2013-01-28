@@ -1207,6 +1207,51 @@ number(const Arg *arg) {
 }
 
 gboolean
+open_handler(char *uri) {
+    char *argv[64];
+    char *p = NULL, *arg, arg_temp[MAX_SETTING_SIZE], *temp, temp2[MAX_SETTING_SIZE] = "", *temp3;
+    int i, j;
+    p = strchr(uri, ':');
+    if (p) {
+        for (i = 0; i < LENGTH(handler_types); i++) {
+            if (strncmp(uri, handler_types[i], strlen(handler_types[i])) == 0) {
+                if (strlen(handlers[i]) > 0) {
+                    arg = (uri + strlen(handler_types[i]));
+                    strncpy(temp2, handlers[i], MAX_SETTING_SIZE);
+                    temp = strtok(temp2, " ");
+                    j = 0;
+                    while (temp != NULL) {
+                        printf("part: '%s'\n", temp);
+                        if (strstr(temp, "%s")) {
+                            temp3 = temp;
+                            memset(arg_temp, 0, MAX_SETTING_SIZE);;
+                            while (strncmp(temp3, "%s", 2) != 0) {
+                                strncat(arg_temp, temp3, 1);
+                                temp3++;
+                            }
+                            strcat(arg_temp, arg);
+                            temp3++;
+                            temp3++;
+                            strcat(arg_temp, temp3);
+                            argv[j] = arg_temp;
+                        } else {
+                            argv[j] = temp;
+                        }
+                        temp = strtok(NULL, " ");
+                        j++;
+                    }
+                    argv[j] =  NULL;
+                    g_spawn_async(NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, NULL);
+                }
+                return TRUE;
+            }
+        }
+    }
+    return FALSE;
+}
+
+gboolean
+
 open_arg(const Arg *arg) {
     char *argv[64];
     char *s = arg->s, *p = NULL, *new;

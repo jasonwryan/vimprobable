@@ -13,7 +13,7 @@
 #define INTERNAL_VERSION "Vimprobable2/"VERSION
 
 /* general settings */
-char startpage[MAX_SETTING_SIZE]      = "http://www.vimprobable.org/";
+char startpage[MAX_SETTING_SIZE]      = "https://bbs.archlinux.org/";
 char useragent[MAX_SETTING_SIZE]      = "Vimprobable2/" VERSION;
 char acceptlanguage[MAX_SETTING_SIZE] = "";
 static const gboolean enablePlugins     = TRUE; /* TRUE keeps plugins enabled */
@@ -30,21 +30,21 @@ char sslinvalidbgcolor[MAX_SETTING_SIZE]= "#ff0000";            /* background co
 char sslcolor[MAX_SETTING_SIZE]         = "#000000";            /* color for status bar with SSL url */
 
                                         /*  normal,                 warning,                error       */
-static const char *urlboxfont[]         = { "monospace normal 8",   "monospace normal 8",   "monospace bold 8"};
-static const char *urlboxcolor[]        = { NULL,                   "#ff0000",              "#ffffff" };
-static const char *urlboxbgcolor[]      = { NULL,                   NULL,                   "#ff0000" };
+static const char *urlboxfont[]         = { "Envy Code R 9",   "Droid Sans Mono Slashed 9",   "Droid Sans Mono Slashed 9"};
+static const char *urlboxcolor[]        = { "#CCCCCC",              "#CC99CC",              "#FFB6C1" };
+static const char *urlboxbgcolor[]      = { "#212121",              "#111111",              "#212121" };
 
                                         /*  normal,                 error               */
-static const char *completionfont[]     = { "monospace normal 8",   "monospace bold 8" };
+static const char *completionfont[]     = { "Envy Code R 9",   "Droid Sans Mono Slashed 9" };
                                                                                         /* topborder color */
-static const char *completioncolor[]    = { "#000000",              "#ff00ff",              "#000000" };
+static const char *completioncolor[]    = { "#899CA1",              "#BF4D80",              "#444444" };
                                                                                         /* current row background */
-static const char *completionbgcolor[]  = { "#ffffff",              "#ffffff",              "#fff000" };
+static const char *completionbgcolor[]  = { "#3D3D3D",              "#8C4665",              "#5C5C5C" };
 /* pango markup for prefix highliting:      opening,                closing             */
 #define             COMPLETION_TAG_OPEN     "<b>"
 #define             COMPLETION_TAG_CLOSE    "</b>"
 
-static const char statusfont[]          = "monospace bold 8";   /* font for status bar */
+static const char statusfont[]          = "Envy Code R 9";   /* font for status bar */
 #define             ENABLE_HISTORY_INDICATOR
 #define             ENABLE_INCREMENTAL_SEARCH
 #define             ENABLE_GTK_PROGRESS_BAR
@@ -114,7 +114,7 @@ static Searchengine searchengines[] = {
     { "dd",         "https://duckduckgo.com/html/?q=%s&t=vimprobable" },
 };
 
-static char defaultsearch[MAX_SETTING_SIZE] = "i";
+static char defaultsearch[MAX_SETTING_SIZE] = "d";
 
 /* command mapping */
 Command commands[COMMANDSIZE] = {
@@ -162,6 +162,7 @@ Command commands[COMMANDSIZE] = {
     { "scrollright",                                    scroll,           {ScrollMove     | DirectionRight    | UnitLine} },
     { "scrollup",                                       scroll,           {ScrollMove     | DirectionTop      | UnitLine} },
     { "scrolldown",                                     scroll,           {ScrollMove     | DirectionBottom   | UnitLine} },
+
 };
 
 /* mouse bindings
