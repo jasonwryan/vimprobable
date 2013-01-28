@@ -154,7 +154,7 @@ char *error_msg = NULL;
 char *config_base = NULL;
 static gboolean manual_focus = FALSE;
 
-GList *activeDownloads;
+GList *activeDownloads, *colon_aliases = NULL;
 
 #include "config.h"
 #include "keymap.h"
@@ -1675,6 +1675,7 @@ fake_key_event(const Arg *a) {
 gboolean
 commandhistoryfetch(const Arg *arg) {
     const int length = g_list_length(commandhistory);
+    gchar *input_message = NULL;
 
     if (length > 0) {
         if (arg->i == DirectionPrev) {
@@ -1684,7 +1685,9 @@ commandhistoryfetch(const Arg *arg) {
         }
 
         const char* command = (char *)g_list_nth_data(commandhistory, commandpointer);
-        gtk_entry_set_text(GTK_ENTRY(inputbox), g_strconcat(":", command, NULL));
+        input_message = g_strconcat(":", command, NULL);
+        gtk_entry_set_text(GTK_ENTRY(inputbox), input_message);
+        g_free(input_message);
         gtk_editable_set_position(GTK_EDITABLE(inputbox), -1);
         return TRUE;
     }
@@ -2178,6 +2181,7 @@ process_line(char *line) {
     size_t len, length = strlen(line);
     gboolean found = FALSE, success = FALSE;
     Arg a;
+    GList *l;
 
     while (isspace(*c))
         c++;
@@ -2186,6 +2190,19 @@ process_line(char *line) {
         return TRUE;
 
     command_hist = g_strdup(c);
+
+    /* check for colon command aliases first */
+    for (l = colon_aliases; l; l = g_list_next(l)) {
+        Alias *alias = (Alias *)l->data;
+        if (length == strlen(alias->alias) && strncmp(alias->alias, line, length) == 0) {
+            /* reroute to target command */
+            c = alias->target;
+            length = strlen(alias->target);
+            break;
+        }
+    }
+
+    /* check standard commands */
     for (i = 0; i < LENGTH(commands); i++) {
         if (commands[i].cmd == NULL)
             break;

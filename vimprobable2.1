@@ -1,7 +1,7 @@
 .\" Process this file with
 .\" groff -man -Tascii vimprobable2.1
 .\"
-.TH VIMPROBABLE2 1 "OCTOBER 2012" "Linux User Manuals"
+.TH VIMPROBABLE2 1 "JANUARY 2013" "Linux User Manuals"
 .SH NAME
 Vimprobable \- A WWW browser based on webkit with keybindings inspired by Vim, the great editor.
 
@@ -60,9 +60,10 @@ Close current window
 
 .SH KEYBOARD BINDINGS
 The default keyboard bindings are explained in this section. These keybindings
-can be changed - either at runtime by altering
+can be changed - either by the map command (changes will take effect immediately)
+or by altering
 .I vimprobablerc
-or editing
+(changes in effect for each new window) or editing
 .I keymap.h
 in the source directory (in which case you will need to recompile to see changes take effect).
 
@@ -137,6 +138,12 @@ Insert URL from keyboard and load it
 
 .I "    " t
 Insert URL from keyboard and load it into new window
+
+.I "    " O
+Generate :open command with the current URL
+
+.I "    " T
+Generate :tabopen command with the current URL
 
 .I "    " u
 Open a new window with the URL which was closed last
