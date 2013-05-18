@@ -69,19 +69,21 @@ function Hints() {
 
             /* due to the different XPath result type, we will need two counter variables */
             var rect, elem, text, node, show_text;
-            for (var i = 0; i < res.snapshotLength; i++)
-            {
-                if (hintCount >= config.maxAllowedHints)
+            for (var i = 0; i < res.snapshotLength; i++) {
+                if (hintCount >= config.maxAllowedHints) {
                     break;
+                }
 
                 elem = res.snapshotItem(i);
                 rect = elem.getBoundingClientRect();
-                if (!rect || rect.left > maxX || rect.right < minX || rect.top > maxY || rect.bottom < minY)
+                if (!rect || rect.left > maxX || rect.right < minX || rect.top > maxY || rect.bottom < minY) {
                     continue;
+                }
 
                 var style = topwin.getComputedStyle(elem, "");
-                if (style.display == "none" || style.visibility != "visible")
+                if (style.display == "none" || style.visibility != "visible") {
                     continue;
+                }
 
                 var leftpos = Math.max((rect.left + scrollX), scrollX);
                 var toppos = Math.max((rect.top + scrollY), scrollY);
@@ -115,11 +117,12 @@ function Hints() {
             var frameTags = ["frame","iframe"];
             for (var f = 0; f < frameTags.length; ++f) {
                 var frames = doc.getElementsByTagName(frameTags[f]);
-                for (var i = 0, nframes = frames.length; i < nframes; ++i) {
+                for (i = 0, nframes = frames.length; i < nframes; ++i) {
                     elem = frames[i];
                     rect = elem.getBoundingClientRect();
-                    if (!elem.contentWindow || !rect || rect.left > maxX || rect.right < minX || rect.top > maxY || rect.bottom < minY)
+                    if (!elem.contentWindow || !rect || rect.left > maxX || rect.right < minX || rect.top > maxY || rect.bottom < minY) {
                         continue;
+                    }
                     helper(elem.contentWindow, offsetX + rect.left, offsetY + rect.top);
                 }
             }
@@ -148,7 +151,7 @@ function Hints() {
         currentFocusNum = n;
 
         /* mark new hint as focused */
-        var hint = _getHintByNumber(currentFocusNum);
+        hint = _getHintByNumber(currentFocusNum);
         if (hint !== null) {
             hint.elem.className = hint.elem.className.replace(config.hintClass, config.hintClassFocus);
             hint.elem.style.background = config.elemBackgroundFocus;
@@ -171,7 +174,7 @@ function Hints() {
     this.focusPreviousHint = function()
     {
         var index = _getHintIdByNumber(currentFocusNum);
-        if (index != 0 && typeof(hints[index - 1].number) != "undefined") {
+        if (index !== 0 && typeof(hints[index - 1].number) != "undefined") {
             this.focusHint(hints[index - 1].number);
         } else {
             this.focusHint(hints[hints.length - 1].number);
@@ -181,19 +184,19 @@ function Hints() {
     /* filters hints matching given number */
     this.updateHints = function(n)
     {
-        if (n == 0) {
+        if (n === 0) {
             return this.createHints();
         }
         /* remove none matching hints */
-        var remove = [];
-        for (var i = 0; i < hints.length; ++i) {
+        var i, remove = [];
+        for (i = 0; i < hints.length; ++i) {
             var hint = hints[i];
-            if (0 != hint.number.toString().indexOf(n.toString())) {
+            if (0 !== hint.number.toString().indexOf(n.toString())) {
                 remove.push(hint.number);
             }
         }
 
-        for (var i = 0; i < remove.length; ++i) {
+        for (i = 0; i < remove.length; ++i) {
             _removeHint(remove[i]);
         }
 
@@ -214,7 +217,7 @@ function Hints() {
     /* remove all hints and set previous style to them */
     this.clearHints = function()
     {
-        if (hints.length == 0) {
+        if (hints.length === 0) {
             return;
         }
         for (var i = 0; i < hints.length; ++i) {
@@ -234,12 +237,11 @@ function Hints() {
     this.fire = function(n)
     {
         var doc, result;
-        if (!n) {
-            var n = currentFocusNum;
-        }
+        n = n ? n : currentFocusNum;
         var hint = _getHintByNumber(n);
-        if (typeof(hint.elem) == "undefined")
+        if (typeof(hint.elem) == "undefined") {
             return "done;";
+        }
 
         var el = hint.elem;
         var tag = el.nodeName.toLowerCase();
@@ -249,19 +251,21 @@ function Hints() {
         if (tag == "iframe" || tag == "frame" || tag == "textarea" || tag == "input" && (el.type == "text" || el.type == "password" || el.type == "checkbox" || el.type == "radio") || tag == "select") {
             el.focus();
             if (tag == "input" || tag == "textarea") {
-                return "insert;"
+                return "insert;";
             }
             return "done;";
         }
 
         switch (mode)
         {
-            case "f": case "i": result = _open(el); break;
-            case "F": case "I": result = _openNewWindow(el); break;
+            case "f": result = _open(el); break;
+            case "F": result = _openNewWindow(el); break;
+            case "i": result = "open;" + _getElemtSource(el); break;
+            case "I": result = "tabopen;" + _getElemtSource(el); break;
             case "s": result = "save;" + _getElemtSource(el); break;
             case "y": result = "yank;" + _getElemtSource(el); break;
             case "O": result = "colon;" + _getElemtSource(el); break;
-            default:  result = _getElemtSource(el);
+            default:  result = _getElemtSource(el); break;
         }
 
         return result;
@@ -269,8 +273,9 @@ function Hints() {
 
     this.focusInput = function()
     {
-        if (document.getElementsByTagName("body")[0] === null || typeof(document.getElementsByTagName("body")[0]) != "object")
+        if (document.getElementsByTagName("body")[0] === null || typeof(document.getElementsByTagName("body")[0]) != "object") {
             return;
+        }
 
         /* prefixing html: will result in namespace error */
         var hinttags = "//input[@type='text'] | //input[@type='password'] | //textarea";
@@ -282,22 +287,19 @@ function Hints() {
         var j = 0;
         var k = 0;
         var first = null;
+        var tag;
         for (i = 0; i < r.snapshotLength; i++) {
             var elem = r.snapshotItem(i);
-            if (k == 0) {
+            if (k === 0) {
                 if (elem.style.display != "none" && elem.style.visibility != "hidden") {
                     first = elem;
                 } else {
                     k--;
                 }
             }
-            if (j == 1 && elem.style.display != "none" && elem.style.visibility != "hidden") {
+            if (j === 1 && elem.style.display != "none" && elem.style.visibility != "hidden") {
                 elem.focus();
-                var tag = elem.nodeName.toLowerCase();
-                if (tag == "textarea" || tag == "input") {
-                    return "insert;";
-                }
-                break;
+                return "insert;";
             }
             if (elem == document.activeElement) {
                 j = 1;
@@ -305,12 +307,9 @@ function Hints() {
             k++;
         }
         /* no appropriate field found focused - focus the first one */
-        if (j == 0 && first !== null) {
+        if (j === 0 && first !== null) {
             first.focus();
-            var tag = elem.nodeName.toLowerCase();
-            if (tag == "textarea" || tag == "input") {
-                return "insert;";
-            }
+            return "insert;";
         }
     };
 
@@ -328,7 +327,7 @@ function Hints() {
         } else {
             text = el.textContent;
         }
-        return text.toLowerCase();;
+        return text.toLowerCase();
     }
 
     /* retrieves the hint for given hint number */
@@ -404,7 +403,7 @@ function Hints() {
         evObj.initMouseEvent("mousedown", true, true, view, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, null);
         elem.dispatchEvent(evObj);
 
-        var evObj = doc.createEvent("MouseEvents");
+        evObj = doc.createEvent("MouseEvents");
         evObj.initMouseEvent("click", true, true, view, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, null);
         elem.dispatchEvent(evObj);
     }
@@ -426,7 +425,7 @@ function Hints() {
         switch (mode) {
             case "f":
             case "F":
-                if (text == "") {
+                if (text === "") {
                     expr = "//*[@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @role='link' or @href] | //input[not(@type='hidden')] | //a[href] | //area | //textarea | //button | //select";
                 } else {
                     expr = "//*[(@onclick or @onmouseover or @onmousedown or @onmouseup or @oncommand or @class='lk' or @role='link' or @href) and contains(., '" + text + "')] | //input[not(@type='hidden') and contains(., '" + text + "')] | //a[@href and contains(., '" + text + "')] | //area[contains(., '" + text + "')] |  //textarea[contains(., '" + text + "')] | //button[contains(@value, '" + text + "')] | //select[contains(., '" + text + "')]";
@@ -434,14 +433,14 @@ function Hints() {
                 break;
             case "i":
             case "I":
-                if (text == "") {
+                if (text === "") {
                     expr = "//img[@src]";
                 } else {
                     expr = "//img[@src and contains(., '" + text + "')]";
                 }
                 break;
             default:
-                if (text == "") {
+                if (text === "") {
                     expr = "//*[@role='link' or @href] | //a[href] | //area | //img[not(ancestor::a)]";
                 } else {
                     expr = "//*[(@role='link' or @href) and contains(., '" + text + "')] | //a[@href and contains(., '" + text + "')] | //area[contains(., '" + text + "')] | //img[not(ancestor::a) and contains(., '" + text + "')]";
@@ -450,6 +449,5 @@ function Hints() {
         }
         return expr;
     }
-
-}
+};
 hints = new Hints();
